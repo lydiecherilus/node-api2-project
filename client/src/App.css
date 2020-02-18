@@ -1,0 +1,16 @@
+.App {
+  text-align: center;
+}
+
+h1 {
+  text-align: center;
+  color:#32527B;
+}
+
+  h1:hover {
+    color: rgb(73, 68, 68);
+    }
+
+.created {
+  font-size: 11px;
+}
