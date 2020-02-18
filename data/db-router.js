@@ -61,26 +61,44 @@ router.post('/', (req, res) => {
     }
 })
 
-//POST/CREATE a comment for a post - not working properly - getting correct error messages - but not created
+//POST/CREATE a comment for a post 
 router.post("/:id/comments", (req, res) => {
     const postId = req.params.id;
-    const data = req.body
-    id = req.params.id
-Posts.findById(postId).then((posts) => {
-    if (!posts) {
-        return res.status(404).json({ errorMessage: "The post with the specified ID does not exist." })
-    } else if (!data.text) {
-            res.status(400).json({ errorMmessage: "Please provide text for the comment." })
-    } else {
-        Posts.insertComment(data.text).then(comment => {
-            res.status(201).json(comment)
+             Posts.findById(postId).then(([post]) => {
+            if (post) {
+                Posts.insertComment({ ...req.body, post_id:postId }).then(({ id }) => {
+                    Posts.findCommentById(id).then(([comment]) => {
+                        res.status(201).json(comment)
+                    });
+                }).catch(error => {
+                    res.status(500).json({ errorMessage: "Please provide text for the comment." })
+                });
+            } else {
+                res.status(404).json({ errorMmessage: "The post with the specified ID does not exist." })
+            }
         }).catch(error => {
             res.status(500).json({ errorMessage: "There was an error while saving the comment to the database" })
         })
-    }
-})
-})
+ })
 
+// router.post("/:id/comments", (req, res) => {
+//     const postId = req.params.id;
+//     const data = req.body
+//     const newComment = {...req.body, post_id:postId}
+//     Posts.findById(postId).then((posts) => {
+//     if (!posts) {
+//         return res.status(404).json({ errorMessage: "The post with the specified ID does not exist." })
+//     } else if (!data.text) {
+//             res.status(400).json({ errorMmessage: "Please provide text for the comment." })
+//     } else {
+//         Posts.insertComment(newComment).then(comment => {
+//             res.status(201).json(comment)
+//         }).catch(error => {
+//             res.status(500).json({ errorMessage: "There was an error while saving the comment to the database" })
+//         })
+//     }
+// })
+// })
 
 
 // DELETE a post
